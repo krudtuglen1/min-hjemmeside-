@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party Mode!</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #6a11cb, #2575fc, #ff4081, #21d4fd);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite, pulseBG 2s infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: white;
+        }
+
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        @keyframes pulseBG {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.1); }
+            100% { filter: brightness(1); }
+        }
+
+        header {
+            padding: 40px 20px;
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            animation: fadeInDown 1.5s ease;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            width: 90%;
+            max-width: 1100px;
+            margin-bottom: 60px;
+            animation: fadeInUp 2s ease;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: transform 0.4s, box-shadow 0.4s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: scale(1.07) rotate(1deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Musikafspiller skjult */
+        audio {
+            display: none;
+        }
+
+        /* Volume og lydkontrol */
+        .volume-control {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        .volume-control input[type="range"] {
+            width: 150px;
+        }
+
+        .volume-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Kontakt sektion */
+        .contact-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .contact-section h2 {
+            font-size: 2rem;
+        }
+
+        .contact-section p {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body onload="playMusic()">
+
+    <header>Velkommen til Party Mode Deluxe!</header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Nyheder</h2>
+            <p>Hold dig opdateret med det seneste!</p>
+        </div>
+        <div class="card">
+            <h2>Events</h2>
+            <p>Kom til fede arrangementer!</p>
+        </div>
+        <div class="card" onclick="showContact()">
+            <h2>Kontakt</h2>
+            <p>Kom i kontakt for hjælp!</p>
+        </div>
+    </div>
+
+    <!-- Kontakt sektion -->
+    <div class="contact-section" id="contactSection">
+        <h2>Kontakt Oplysninger</h2>
+        <p>Snapchat: <strong>taz_4960</strong></p>
+        <p>Discord: <strong>Taz4960</strong></p>
+        <p>Kontakt mig for hjælp!</p>
+    </div>
+
+    <!-- Volume Kontrol -->
+    <div class="volume-control">
+        <span id="volumeIcon" class="volume-icon">🔊</span>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.4">
+    </div>
+
+    <footer>© 2025 Din Hjemmeside</footer>
+
+    <!-- Musikafspiller -->
+    <audio id="bgMusic" loop>
+        <source src="breathe.mp3" type="audio/mp3">
+        Din browser understøtter ikke lydafspilning.
+    </audio>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeIcon = document.getElementById('volumeIcon');
+        const contactSection = document.getElementById('contactSection');
+
+        function playMusic() {
+            music.volume = volumeSlider.value;
+            music.play().catch(e => {
+                console.log('Bruger skal interagere før musik starter.');
+            });
+        }
+
+        volumeSlider.addEventListener('input', function() {
+            music.volume = this.value;
+            updateVolumeIcon();
+        });
+
+        volumeIcon.addEventListener('click', function() {
+            if (music.volume > 0) {
+                music.volume = 0;
+                volumeSlider.value = 0;
+            } else {
+                music.volume = 0.4;
+                volumeSlider.value = 0.4;
+            }
+            updateVolumeIcon();
+        });
+
+        function updateVolumeIcon() {
+            if (music.volume == 0) {
+                volumeIcon.textContent = '🔇';
+            } else if (music.volume < 0.5) {
+                volumeIcon.textContent = '🔉';
+            } else {
+                volumeIcon.textContent = '🔊';
+            }
+        }
+
+        function showContact() {
+            contactSection.style.display = 'flex';
+        }
+    </script>
+
+</body>
+</html>
